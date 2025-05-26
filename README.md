@@ -1,6 +1,6 @@
 # SaaS Gestao Assinaturas 
 
-# Como rodar o Banco de Dados:
+### Como rodar o Banco de Dados:
 - Execute o comando:
 ```bash
 docker-compose up -d
