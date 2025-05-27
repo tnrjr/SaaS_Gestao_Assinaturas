@@ -31,7 +31,9 @@ public class Subscription {
     @Enumerated(EnumType.STRING)
     private Status status; // ATIVA, CANCELADA
 
+    @Column
     private LocalDateTime startDate;
+    @Column
     private LocalDateTime endDate;
 
     public enum Status {
