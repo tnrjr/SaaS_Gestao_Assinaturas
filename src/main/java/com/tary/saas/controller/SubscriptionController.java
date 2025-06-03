@@ -44,11 +44,13 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptions);
     }
 
-    @PostMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancel(@PathVariable Long id) {
-        subscriptionService.cancelSubscription(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancelSubscription(@PathVariable Long id, HttpServletRequest request) {
+        Long companyId = (Long) request.getAttribute("companyId");
+        subscriptionService.cancelSubscription(id, companyId);
+        return ResponseEntity.ok().build();
     }
+
 
     private SubscriptionResponseDTO toResponse(Subscription subscription) {
         return new SubscriptionResponseDTO(

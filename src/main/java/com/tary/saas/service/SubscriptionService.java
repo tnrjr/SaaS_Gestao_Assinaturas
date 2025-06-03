@@ -10,7 +10,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +35,7 @@ public class SubscriptionService {
                 .companyId(companyId)
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now().plusMonths(1)) // Exemplo: assinatura válida por 1 mês
+                .status(Subscription.Status.ATIVA) // Se tiver campo status
                 .build();
 
         return subscriptionRepository.save(subscription);
@@ -45,19 +45,24 @@ public class SubscriptionService {
         return subscriptionRepository.findByCompanyId(companyId);
     }
 
-    public Optional<Subscription> getSubscriptionById(Long id) {
-        return subscriptionRepository.findById(id);
+    public Optional<Subscription> getSubscriptionById(Long id, Long companyId) {
+        return subscriptionRepository.findByIdAndCompanyId(id, companyId);
     }
 
-    public void deleteSubscription(Long id) {
-        subscriptionRepository.deleteById(id);
+    public void deleteSubscription(Long id, Long companyId) {
+        Subscription subscription = subscriptionRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Assinatura não encontrada para essa empresa."));
+
+        subscriptionRepository.delete(subscription);
     }
 
-    public void cancelSubscription(Long id) {
-        Subscription subscription = subscriptionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Assinatura não encontrada"));
+    public void cancelSubscription(Long id, Long companyId) {
+        Subscription subscription = subscriptionRepository.findByIdAndCompanyId(id, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Assinatura não encontrada para essa empresa."));
 
         subscription.setEndDate(LocalDateTime.now()); // Marcar a assinatura como cancelada a partir de hoje
+        subscription.setStatus(Subscription.Status.CANCELADA); // Se tiver campo status
+
         subscriptionRepository.save(subscription);
     }
 }

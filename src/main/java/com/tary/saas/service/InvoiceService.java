@@ -26,8 +26,8 @@ public class InvoiceService {
     private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
 
     public Invoice createInvoice(Long subscriptionId, BigDecimal amount, Long companyId) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId)
-                .orElseThrow(() -> new EntityNotFoundException("Assinatura não encontrada"));
+        Subscription subscription = subscriptionRepository.findByIdAndCompanyId(subscriptionId, companyId)
+                .orElseThrow(() -> new EntityNotFoundException("Assinatura não encontrada para essa empresa."));
 
         Invoice invoice = Invoice.builder()
                 .subscription(subscription)
